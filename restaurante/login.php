@@ -1,5 +1,11 @@
 <?php
+session_start();
 include "config.php";
+
+if (isset($_SESSION['user'])) {
+    header("Location: " . ($_SESSION['user']['perfil'] == 'admin' ? "admin.php" : "dashboard.php"));
+    exit();
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
