@@ -54,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       <p class="text-red-500 text-sm text-center"><?php echo $erro; ?></p>
     <?php endif; ?>
 
+    
     <input type="text" name="nome" placeholder="Nome completo" required class="w-full p-2 border rounded">
     <input type="email" name="email" placeholder="Email" required class="w-full p-2 border rounded">
     <input type="password" name="senha" placeholder="Senha" required class="w-full p-2 border rounded">
