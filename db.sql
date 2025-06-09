@@ -21,7 +21,7 @@ CREATE TABLE pedidos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_utilizador INT,
     data_pedido DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_utilizador) REFERENCES utilizadores(id)
+    FOREIGN KEY (id_utilizador) REFERENCES utilizadores(id) ON DELETE CASCADE
 );
 
 CREATE TABLE itens_pedido (
@@ -29,6 +29,6 @@ CREATE TABLE itens_pedido (
     id_pedido INT,
     id_prato INT,
     quantidade INT,
-    FOREIGN KEY (id_pedido) REFERENCES pedidos(id),
-    FOREIGN KEY (id_prato) REFERENCES pratos(id)
+    FOREIGN KEY (id_pedido) REFERENCES pedidos(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_prato) REFERENCES pratos(id) ON DELETE CASCADE
 );

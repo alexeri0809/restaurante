@@ -1,8 +1,21 @@
 <?php
+
+//Este não faz nada, apenas é um apoio para os outros
+
+
+
+
 session_start();
 include "config.php";
 
-if (!isset($_SESSION['user']) || $_SESSION['user']['perfil'] != 'cliente') {
+// Antes: só clientes podiam acessar
+// if (!isset($_SESSION['user']) || $_SESSION['user']['perfil'] != 'cliente') {
+//     header("Location: login.php");
+//     exit();
+// }
+
+// Agora: qualquer usuário logado pode acessar
+if (!isset($_SESSION['user'])) {
     header("Location: login.php");
     exit();
 }

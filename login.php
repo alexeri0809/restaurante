@@ -1,4 +1,10 @@
 <?php
+
+//Este não faz nada, apenas é um apoio para os outros
+
+
+
+
 session_start();
 include "config.php";
 
@@ -6,6 +12,8 @@ if (isset($_SESSION['user'])) {
     header("Location: " . ($_SESSION['user']['perfil'] == 'admin' ? "admin.php" : "dashboard.php"));
     exit();
 }
+
+$msgErro = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
@@ -22,14 +30,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: " . ($user['perfil'] == 'admin' ? "admin.php" : "dashboard.php"));
         exit();
     } else {
-        echo "Login inválido.";
+        $msgErro = "Login inválido.";
     }
 }
 ?>
 
-<!-- Formulário -->
+
 <form method="POST" class="max-w-md mx-auto p-4">
   <input type="email" name="email" placeholder="Email" required class="mb-2 w-full">
   <input type="password" name="senha" placeholder="Senha" required class="mb-2 w-full">
   <button type="submit" class="bg-blue-500 text-white px-4 py-2">Entrar</button>
+  <?php if ($msgErro): ?>
+    <p class="text-red-600 mt-2"><?= htmlspecialchars($msgErro) ?></p>
+  <?php endif; ?>
 </form>

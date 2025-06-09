@@ -1,8 +1,10 @@
 <?php
+
 session_start();
 include "config.php";
 
-if (!isset($_SESSION['user']) || $_SESSION['user']['perfil'] != 'cliente') {
+// Permitir acesso a qualquer usuário logado:
+if (!isset($_SESSION['user'])) {
     header("Location: login.php");
     exit();
 }
@@ -17,25 +19,30 @@ if (!isset($_POST['qtd']) || empty(array_filter($_POST['qtd']))) {
     exit();
 }
 
-$id_cliente = $_SESSION['user']['id'];
+$id_utilizador = $_SESSION['user']['id'];
 
-// Inserir pedido
+// Inserir pedido (coluna correta: id_utilizador)
 $stmt = $conn->prepare("INSERT INTO pedidos (id_cliente, data_pedido) VALUES (?, NOW())");
-$stmt->bind_param("i", $id_cliente);
+$stmt->bind_param("i", $id_utilizador);
 $stmt->execute();
 $id_pedido = $conn->insert_id;
 
-// Inserir itens do pedido
+// Inserir itens do pedido (tabela correta: itens_pedido)
 foreach ($_POST['qtd'] as $id_prato => $quantidade) {
     $quantidade = (int)$quantidade;
     $id_prato = (int)$id_prato;
 
     if ($quantidade > 0) {
-        $stmt_item = $conn->prepare("INSERT INTO pedido_itens (id_pedido, id_prato, quantidade) VALUES (?, ?, ?)");
+        $stmt_item = $conn->prepare("INSERT INTO itens_pedido (id_pedido, id_prato, quantidade) VALUES (?, ?, ?)");
+        if (!$stmt_item) {
+            die("Erro no prepare: " . $conn->error);
+        }
         $stmt_item->bind_param("iii", $id_pedido, $id_prato, $quantidade);
         $stmt_item->execute();
     }
 }
 
-header("Location: sucesso.php");
+header("Location: 1_pagamento.php");
 exit();
+
+?>

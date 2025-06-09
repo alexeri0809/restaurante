@@ -1,6 +1,40 @@
 <?php
+
+//Este não faz nada, apenas é um apoio para os outros
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+session_start(); // 👈 Mantém para acessar $_SESSION
 include "config.php";
-if (!isset($_SESSION['user']) || $_SESSION['user']['perfil'] != 'admin') {
+
+// Removi a verificação de perfil admin
+if (!isset($_SESSION['user'])) {  
     header("Location: login.php");
     exit();
 }
@@ -8,9 +42,9 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['perfil'] != 'admin') {
 $pedidos = $conn->query("
   SELECT p.id, u.nome, p.data_pedido 
   FROM pedidos p
-  JOIN utilizadores u ON p.id_utilizador = u.id
+  JOIN utilizadores u ON p.id_cliente = u.id
   ORDER BY p.data_pedido DESC
-");
+"); 
 ?>
 
 <h2 class="text-xl mb-4">Pedidos Recebidos</h2>
