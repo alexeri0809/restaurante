@@ -23,11 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fileNameCmps = explode(".", $fileName);
         $fileExtension = strtolower(end($fileNameCmps));
 
-        // Extensões permitidas
         $allowedfileExtensions = ['jpg', 'jpeg', 'png', 'gif'];
 
         if (in_array($fileExtension, $allowedfileExtensions)) {
-            if ($fileSize <= 2 * 1024 * 1024) { // 2MB
+            if ($fileSize <= 2 * 1024 * 1024) { 
                 $newFileName = time() . '.' . $fileExtension;
                 $uploadFileDir = 'img/pratos/';
                 $dest_path = $uploadFileDir . $newFileName;
@@ -46,16 +45,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $erro = "Erro ao adicionar prato no banco de dados.";
                     }
                 } else {
-                    $erro = "Erro ao mover o arquivo para o diretório de destino.";
+                    $erro = "Erro ao mover o arquivo.";
                 }
             } else {
-                $erro = "O arquivo é muito grande. Limite: 2MB.";
+                $erro = "O arquivo é muito grande. Máximo: 2MB.";
             }
         } else {
-            $erro = "Tipo de arquivo não permitido. Use jpg, jpeg, png ou gif.";
+            $erro = "Tipo de arquivo inválido. Use jpg, jpeg, png ou gif.";
         }
     } else {
-        $erro = "Erro no upload da imagem. Tente novamente.";
+        $erro = "Erro no upload da imagem.";
     }
 }
 ?>
@@ -67,27 +66,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Adicionar Prato</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-6">
-  <h2 class="text-2xl mb-4">Adicionar Novo Prato</h2>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
 
-  <?php if ($erro): ?>
-    <div class="bg-red-200 text-red-800 p-3 rounded mb-4 max-w-md">
-      <?php echo $erro; ?>
-    </div>
-  <?php endif; ?>
+  <div class="bg-white p-8 rounded shadow-lg w-full max-w-lg">
+    <h2 class="text-3xl mb-6 text-center font-bold text-green-700">Adicionar Novo Prato</h2>
 
-  <?php if ($sucesso): ?>
-    <div class="bg-green-200 text-green-800 p-3 rounded mb-4 max-w-md">
-      <?php echo $sucesso; ?> <a href="admin.php" class="underline">Voltar</a>
-    </div>
-  <?php endif; ?>
+    <?php if ($erro): ?>
+      <div class="bg-red-100 text-red-700 border border-red-400 p-4 rounded mb-4">
+        <?= $erro; ?>
+      </div>
+    <?php endif; ?>
 
-  <form method="POST" enctype="multipart/form-data" class="space-y-4 bg-white p-6 rounded shadow max-w-md">
-    <input type="text" name="nome" placeholder="Nome do prato" required class="w-full border p-2 rounded" />
-    <textarea name="descricao" placeholder="Descrição" required class="w-full border p-2 rounded"></textarea>
-    <input type="number" name="preco" placeholder="Preço (€)" step="0.01" required class="w-full border p-2 rounded" />
-    <input type="file" name="imagem" accept="image/*" required class="w-full" />
-    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Adicionar Prato</button>
-  </form>
+    <?php if ($sucesso): ?>
+      <div class="bg-green-100 text-green-700 border border-green-400 p-4 rounded mb-4">
+        <?= $sucesso; ?> 
+        <a href="admin.php" class="text-green-800 underline ml-2">Voltar</a>
+      </div>
+    <?php endif; ?>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-5">
+      <div>
+        <label class="block font-semibold mb-1">Nome do Prato</label>
+        <input type="text" name="nome" required class="w-full border p-2 rounded focus:ring-2 focus:ring-green-500" />
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-1">Descrição</label>
+        <textarea name="descricao" rows="3" required class="w-full border p-2 rounded focus:ring-2 focus:ring-green-500"></textarea>
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-1">Preço (€)</label>
+        <input type="number" name="preco" step="0.01" required class="w-full border p-2 rounded focus:ring-2 focus:ring-green-500" />
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-1">Imagem</label>
+        <input type="file" name="imagem" accept="image/*" required class="w-full border p-2 rounded" />
+      </div>
+
+      <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded font-semibold">Adicionar Prato</button>
+    </form>
+  </div>
+
 </body>
 </html>

@@ -1,10 +1,5 @@
 <?php
 
-//Este não faz nada, apenas é um apoio para os outros
-
-
-
-
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
