@@ -7,6 +7,7 @@ if (isset($_SESSION['user'])) {
     header("Location: " . ($_SESSION['user']['perfil'] == 'admin' ? "admin.php" : "dashboard.php"));
     exit();
 }
+// teste
 
 $msgErro = "";
 
