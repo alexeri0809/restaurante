@@ -1,10 +1,5 @@
 <?php
 
-//Este não faz nada, apenas é um apoio para os outros
-
-
-
-
 session_start();
 include "config.php";
 
