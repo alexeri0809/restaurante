@@ -1,37 +1,36 @@
 <?php
 session_start();
 include "config.php";
-echo "Arquivo acessível!";
 
-// --- PERMISSÃO DESATIVADA TEMPORARIAMENTE ---
+// --- PERMISSÃO OPCIONAL ---
 // if (!isset($_SESSION['user']) || $_SESSION['user']['perfil'] != 'admin') {
 //     header("Location: login.php");
 //     exit();
 // }
 
-// Verifica se veio o ID do prato
-if (!isset($_GET['id']) || empty($_GET['id'])) {
-    header("Location: admin.php");
-    exit();
+$modo_edicao = false;
+$sucesso = "";
+$erro = "";
+
+// Verifica se é uma edição
+if (isset($_GET['id'])) {
+    $id = intval($_GET['id']);
+    $stmt = $conn->prepare("SELECT * FROM pratos WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 0) {
+        $erro = "Prato não encontrado.";
+    } else {
+        $prato = $result->fetch_assoc();
+        $modo_edicao = true;
+    }
 }
-
-$id = intval($_GET['id']);
-
-// Busca os dados atuais do prato
-$stmt = $conn->prepare("SELECT * FROM pratos WHERE id = ?");
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows === 0) {
-    echo "Prato não encontrado.";
-    exit();
-}
-
-$prato = $result->fetch_assoc();
 
 // Atualizar prato
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
+    $id = intval($_POST['id']);
     $nome = trim($_POST['nome']);
     $descricao = trim($_POST['descricao']);
     $preco = floatval($_POST['preco']);
@@ -41,30 +40,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $update->bind_param("ssdsi", $nome, $descricao, $preco, $imagem, $id);
 
     if ($update->execute()) {
-        $sucesso = "Prato atualizado com sucesso!";
-        // Atualiza os dados do prato na variável para atualizar o formulário também
-        $prato['nome'] = $nome;
-        $prato['descricao'] = $descricao;
-        $prato['preco'] = $preco;
-        $prato['imagem'] = $imagem;
+        header("Location: editar_prato.php?sucesso=1");
+        exit();
     } else {
         $erro = "Erro ao atualizar o prato.";
     }
 }
+
+// Mensagem de sucesso após redirecionamento
+if (isset($_GET['sucesso'])) {
+    $sucesso = "Prato atualizado com sucesso!";
+}
+
+// Buscar todos os pratos para exibição
+$pratos = $conn->query("SELECT * FROM pratos ORDER BY nome ASC");
 ?>
 
 <!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Editar Prato</title>
+    <title>Editar Pratos</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 p-8">
+<body class="bg-gray-100 min-h-screen p-8">
 
-<div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+<div class="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-lg">
 
-    <h2 class="text-3xl font-bold text-green-700 mb-6 text-center">Editar Prato</h2>
+    <h1 class="text-3xl font-bold text-green-700 mb-6 text-center">Gestão de Pratos</h1>
 
     <?php if (!empty($sucesso)): ?>
         <div class="bg-green-100 text-green-700 p-4 mb-6 rounded text-center">
@@ -76,29 +79,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     <?php endif; ?>
 
-    <form method="POST" class="space-y-4">
-        <div>
-            <label class="font-semibold">Nome do prato:</label>
-            <input type="text" name="nome" value="<?= htmlspecialchars($prato['nome']) ?>" required class="w-full p-3 border rounded focus:ring-2 focus:ring-green-500">
-        </div>
-        <div>
-            <label class="font-semibold">Descrição:</label>
-            <textarea name="descricao" required class="w-full p-3 border rounded focus:ring-2 focus:ring-green-500"><?= htmlspecialchars($prato['descricao']) ?></textarea>
-        </div>
-        <div>
-            <label class="font-semibold">Preço (€):</label>
-            <input type="number" step="0.01" name="preco" value="<?= htmlspecialchars($prato['preco']) ?>" required class="w-full p-3 border rounded focus:ring-2 focus:ring-green-500">
-        </div>
-        <div>
-            <label class="font-semibold">Imagem (nome do ficheiro):</label>
-            <input type="text" name="imagem" value="<?= htmlspecialchars($prato['imagem']) ?>" required class="w-full p-3 border rounded focus:ring-2 focus:ring-green-500">
-        </div>
+    <?php if ($modo_edicao): ?>
+        <h2 class="text-xl font-semibold mb-4">Editar Prato: <?= htmlspecialchars($prato['nome']) ?></h2>
+        <form method="POST" class="space-y-4 mb-8">
+            <input type="hidden" name="id" value="<?= $prato['id'] ?>">
+            <div>
+                <label class="font-semibold">Nome:</label>
+                <input type="text" name="nome" value="<?= htmlspecialchars($prato['nome']) ?>" required class="w-full p-3 border rounded">
+            </div>
+            <div>
+                <label class="font-semibold">Descrição:</label>
+                <textarea name="descricao" required class="w-full p-3 border rounded"><?= htmlspecialchars($prato['descricao']) ?></textarea>
+            </div>
+            <div>
+                <label class="font-semibold">Preço (€):</label>
+                <input type="number" step="0.01" name="preco" value="<?= htmlspecialchars($prato['preco']) ?>" required class="w-full p-3 border rounded">
+            </div>
+            <div>
+                <label class="font-semibold">Imagem:</label>
+                <input type="text" name="imagem" value="<?= htmlspecialchars($prato['imagem']) ?>" required class="w-full p-3 border rounded">
+            </div>
 
-        <div class="flex justify-between mt-6">
-            <a href="admin.php" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition">Cancelar</a>
-            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Salvar Alterações</button>
-        </div>
-    </form>
+            <div class="flex justify-between mt-6">
+                <a href="editar_prato.php" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition">Cancelar</a>
+                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Salvar Alterações</button>
+            </div>
+        </form>
+    <?php endif; ?>
+
+    <h2 class="text-2xl font-semibold mb-4">Lista de Pratos</h2>
+    <table class="w-full table-auto border-collapse">
+        <thead>
+            <tr class="bg-green-100 text-left">
+                <th class="p-3">Nome</th>
+                <th class="p-3">Preço (€)</th>
+                <th class="p-3">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while ($prato = $pratos->fetch_assoc()): ?>
+                <tr class="border-b hover:bg-green-50">
+                    <td class="p-3"><?= htmlspecialchars($prato['nome']) ?></td>
+                    <td class="p-3">€<?= number_format($prato['preco'], 2, ',', '.') ?></td>
+                    <td class="p-3">
+                        <a href="editar_prato.php?id=<?= $prato['id'] ?>" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Editar</a>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+        </tbody>
+    </table>
+
+    <div class="mt-6 text-center">
+        <a href="admin.php" class="text-gray-600 hover:text-black underline">Voltar ao Painel</a>
+    </div>
 
 </div>
 

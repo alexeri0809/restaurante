@@ -102,9 +102,9 @@ a:hover {
   transition: fill 1,6s;
 }
 
-.fish path:hover {
+/* .fish path:hover {
   fill: #ff6100; /* $colorSecondary */
-}
+/* } */ 
 
 .line { 
   fill: none;
@@ -278,8 +278,8 @@ a:hover {
 
 <div class="container">
     <div class="card">
-        <h1 class="card_title">Login to your account</h1>
-        <p class="card_title-info">By Alexandre João</p>
+        <h1 class="card_title">Faça login na sua conta</h1>
+        <p class="card_title-info">By Alexandre João/Tomas Marques</p>
         <form class="card_form" action="" method="POST">
     <div class="input">
         <input type="text" class="input_field" name="email" required />
@@ -296,7 +296,7 @@ a:hover {
 </form>
 
         <div class="card_info">
-            <p>Not registered? <a href="#">Create an account</a></p>
+            <p>Not registered? <a href="1_register.php">Create an account</a></p>
         </div>
     </div>
     <div class="fish-shadow-con">

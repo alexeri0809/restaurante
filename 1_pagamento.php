@@ -28,8 +28,14 @@ if (!isset($_SESSION['user'])) {
       O seu pedido foi recebido e está a ser cuidadosamente preparado.
     </p>
     
-    <a href="dashboard.php" class="inline-block bg-green-600 hover:bg-green-700 text-white text-lg font-bold py-3 px-6 rounded-full shadow-md transition">
+    <a href="dashboard.php" class="inline-block bg-green-600 hover:bg-green-700 text-white text-lg font-bold py-3 px-6 rounded-full shadow-md transition mb-3">
       Voltar ao Menu
+    </a>
+
+    <br>
+
+    <a href="pratos.php" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white text-lg font-bold py-3 px-6 rounded-full shadow-md transition">
+      Fazer Avaliação
     </a>
   </div>
 
