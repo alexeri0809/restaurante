@@ -1,5 +1,6 @@
 CREATE DATABASE IF NOT EXISTS restaurante;
 USE restaurante;
+SELECT * FROM `avaliacoes`
 
 CREATE TABLE utilizadores (
     id INT AUTO_INCREMENT PRIMARY KEY,
